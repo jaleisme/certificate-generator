@@ -56,7 +56,7 @@
 <!-- ABOUT THE PROJECT -->
 ## About The Project
 
-[![Product Name Screen Shot][product-screenshot]](https://github.com/jaleisme/certificate-generator/blob/main/docs/product-screenshot.png)
+[![Product Name Screen Shot][product-screenshot]](https://drive.google.com/drive/folders/1oFvAOgp9SxQd5i7VUmuNtY76NXMuIGv0?usp=sharing)
 
 Here's a blank template to get started: To avoid retyping too much info. Do a search and replace with your text editor for the following: `github_username`, `repo_name`, `twitter_handle`, `linkedin_username`, `email_client`, `email`, `project_title`, `project_description`
 
