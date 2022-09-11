@@ -13,12 +13,12 @@
     <div class="container d-flex flex-column justify-content-center" style="height: 100vh;">
       <div class="row mb-3">
         <div class="col-4">
-          <div class="w-100 bg-primary text-white p-3">
+          <div class="w-100 bg-primary text-white p-3" id="certificate-detail-step">
             <h6>Step 1 - Certificate Detail</h6>
           </div>
         </div>
         <div class="col-4">
-          <div class="w-100 bg-light border text-muted p-3">
+          <div class="w-100 bg-light border text-muted p-3" id="certificate-recipient-step">
             <h6>Step 2 - Certificate Recipient(s)</h6>
           </div>
         </div>
@@ -40,10 +40,12 @@
                     <label for="certificateTitle">Certificate Title</label>
                     <input type="text" class="form-control" id="certificateTitle" aria-describedby="certificateTitleHelp">
                     <small id="certificateTitleHelp" class="form-text text-muted">The purpose of certificate (e.g. Event Name, Course Name, etc.)</small>
+                    <small class="form-text text-danger d-none" id="error-title">Title field can't be empty!</small>
                   </div>
                   <div class="form-group">
                     <label for="numberCopy" class="form-label">Number of Copy</label>
                     <input type="number" class="form-control" id="numberCopy">
+                    <small class="form-text text-danger d-none" id="error-copy">Copy field can't be empty!</small>
                   </div>
                   <button type="button" class="btn btn-primary float-right" onclick="certificateDetailSubmit()">Next</button>
                 </div>
@@ -107,9 +109,13 @@
 
             // Hiding Form
             $('#certificateeDetail').addClass('d-none')
+            $('#certificate-recipient-step').removeClass('bg-primary text-white')
+            $('#certificate-recipient-step').addClass('bg-light border text-muted')
             
             // Showing Form
             $('#certificateDetailForm').removeClass('d-none')
+            $('#certificate-detail-step').removeClass('bg-light border text-muted')
+            $('#certificate-detail-step').addClass('bg-primary text-white')
           }
         })
       }
@@ -117,9 +123,13 @@
       function certificateDetailOut(){
         // Hiding Form
         $('#certificateDetailForm').addClass('d-none')
-
+        $('#certificate-detail-step').removeClass('bg-primary text-white')
+        $('#certificate-detail-step').addClass('bg-light border text-muted')
+        
         // Showing Form
         $('#certificateeDetail').removeClass('d-none')        
+        $('#certificate-recipient-step').removeClass('bg-light border text-muted')
+        $('#certificate-recipient-step').addClass('bg-primary text-white')
       }
 
       function certificateDetailSubmit(){
@@ -127,30 +137,55 @@
         title = $('#certificateTitle').val()
         copy = $('#numberCopy').val()
 
-        // Form Transition
-        certificateDetailOut()
-        
-        // Cloning Fields
-        $('#certificatee-label-0').text("Name 1")
-        let i
-        var cloned = $("#certificatee-field-0")
-        for (i = 0; i < copy-1; i++) {
-          // Cloning Parent
-          cloned.clone().removeAttr('id', 'certificatee-field-0').attr('id', 'certificatee-field-'+(i+1)).insertAfter($("#certificatee-field-"+i));
+        // Form validation
+        if(title != '' && copy != ''){
+          // Error effect cleaning
+          $('#error-title').addClass("d-none")
+          $('#error-copy').addClass("d-none")
+          $('#certificateTitle').removeClass("border border-danger")
+          $('#numberCopy').removeClass("border border-danger")
 
-          // Altering Label id, text, and for attribute
-          $('#certificatee-field-'+(i+1)).children().first().removeAttr('id', 'certificatee-label-0').attr('id', 'certificatee-label-'+(i+1))
-          $('#certificatee-label-'+(i+1)).removeAttr('for', 'certificatee-0').attr('for', 'certificatee-'+(i+1))
-          $('#certificatee-label-'+(i+1)).text("Name "+(i+2))
-
-          // Altering field id
-          $('#certificatee-field-'+(i+1)).children().last().removeAttr('id', 'certificatee-0').attr('id', 'certificatee-'+(i+1))
+          // Form Transition
+          certificateDetailOut()
+          
+          // Cloning Fields
+          $('#certificatee-label-0').text("Name 1")
+          let i
+          var cloned = $("#certificatee-field-0")
+          for (i = 0; i < copy-1; i++) {
+            // Cloning Parent
+            cloned.clone().removeAttr('id', 'certificatee-field-0').attr('id', 'certificatee-field-'+(i+1)).insertAfter($("#certificatee-field-"+i));
+  
+            // Altering Label id, text, and for attribute
+            $('#certificatee-field-'+(i+1)).children().first().removeAttr('id', 'certificatee-label-0').attr('id', 'certificatee-label-'+(i+1))
+            $('#certificatee-label-'+(i+1)).removeAttr('for', 'certificatee-0').attr('for', 'certificatee-'+(i+1))
+            $('#certificatee-label-'+(i+1)).text("Name "+(i+2))
+  
+            // Altering field id
+            $('#certificatee-field-'+(i+1)).children().last().removeAttr('id', 'certificatee-0').attr('id', 'certificatee-'+(i+1))
+          }
+  
+          // Debugging
+          console.log(title, copy);
+          $('#certificateTitleDebug').text(title)
+          $('#numberCopyDebug').text(copy)
+        } else {
+          // Field highlighting for form validation
+          if(title == ''){
+            $('#error-title').removeClass("d-none")
+            $('#certificateTitle').addClass("border border-danger")
+          }
+          if(copy == ''){
+            $('#error-copy').removeClass("d-none")
+            $('#numberCopy').addClass("border border-danger")
+          }
+          Swal.fire({
+            icon: 'error',
+            title: 'Oops...',
+            text: "Make sure you've filled all the fields!"
+          })
         }
 
-        // Debugging
-        console.log(title, copy);
-        $('#certificateTitleDebug').text(title)
-        $('#numberCopyDebug').text(copy)
       }
     </script>
   </body>
