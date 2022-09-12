@@ -10,7 +10,8 @@
     <title>Jaleisme's Certificate Generator</title>
   </head>
   <body>
-    <div class="container d-flex flex-column justify-content-center" style="height: 100vh;">
+    <div class="container py-5" style="height: 100vh;">
+    <!-- <div class="container d-flex flex-column justify-content-center" style="height: 100vh;"> -->
       <div class="row mb-3">
         <div class="col-4">
           <div class="w-100 bg-primary text-white p-3" id="certificate-detail-step">
@@ -23,19 +24,19 @@
           </div>
         </div>
         <div class="col-4">
-          <div class="w-100 bg-light border text-muted p-3">
+          <div class="w-100 bg-light border text-muted p-3" id="configure-template-step">
             <h6>Step 3 - Template Configuration</h6>
           </div>
         </div>
       </div>
 
-      <div class="row">
+      <div class="row pb-5">
         <div class="col-12">
           <div class="card w-100">
             <div class="card-body">
               <!-- Certificate Detail Form -->
               <div class="row" id="certificateDetailForm">
-                <div class="col-8 offset-2">
+                <div class="col-12">
                   <div class="form-group">
                     <label for="certificateTitle">Certificate Title</label>
                     <input type="text" class="form-control" id="certificateTitle" aria-describedby="certificateTitleHelp">
@@ -51,9 +52,9 @@
                 </div>
               </div>
   
-              <!-- Certificatee Detail -->
+              <!-- Certificate Recipient Form -->
               <div class="row d-none" id="certificateeDetail">
-                <div class="col-8 offset-2">
+                <div class="col-12">
                   <div class="form-group" id="certificatee-field-0">
                     <label id="certificatee-label-0" for="certificatee-0"></label>
                     <input type="text" class="form-control" id="certificatee-0">
@@ -61,6 +62,38 @@
                   <div class="row">
                     <div class="col-12 d-flex justify-content-between">
                       <button type="button" class="btn btn-secondary" onclick="certificateDetailIn()">Prev</button>
+                      <button type="button" class="btn btn-primary" onclick="certificateRecipientSubmit()">Next</button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Template Configuration Form -->
+              <div class="row d-none" id="templateConfigForm">
+                <div class="col-6">
+                  <div class="wrapper d-flex justify-content-center align-items-center bg-light border border-secondary h-100">
+                    <img src="" alt="" class="w-100 d-none" id="img-preview">
+                  </div>
+                </div>
+                <div class="col-6 d-flex align-items-center">
+                  <div class="row">
+                    <div class="col-12">
+                      <div class="form-group">
+                        <label for="">Upload Template</label>
+                        <div class="custom-file">
+                          <input type="file" class="custom-file-input" id="file-upload" aria-describedby="inputGroupFileAddon01">
+                          <label class="custom-file-label" for="file-upload">Choose file</label>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="col-6">
+                      <div class="form-group"><label for="">X</label><input type="number" class="form-control"></div>
+                    </div>
+                    <div class="col-6">
+                      <div class="form-group"><label for="">Y</label><input type="number" class="form-control"></div>
+                    </div>
+                    <div class="col-12 d-flex justify-content-between">
+                      <button type="button" class="btn btn-secondary" onclick="configTemplateOut()">Prev</button>
                       <button type="button" class="btn btn-primary">Next</button>
                     </div>
                   </div>
@@ -72,6 +105,7 @@
                 <span class="text-secondary mr-3 border-right border-secondary pr-3">Debugger Status</span>
                 <small class="text-secondary mr-3">Title: <span id="certificateTitleDebug">n/a</span></small>
                 <small class="text-secondary mr-3">Copy: <span id="numberCopyDebug">n/a</span></small>
+                <small class="text-secondary mr-3">Error Validation Count: <span id="errVal">n/a</span></small>
               </div>
             </div>
           </div>
@@ -81,112 +115,47 @@
       </div>
     </div>
     <!-- Online JS -->
-    <script src="https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
+    <script src="https://code.jquery.com/jquery-3.6.1.js" integrity="sha256-3zlB5s2uwoUzrXK3BT7AX3FyvojsraNFxCc2vC/7pNI=" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js" integrity="sha384-9/reFTGAW83EW2RDu2S0VKaIzap3H66lZH81PoYlFhbGU+6BZp6G7niu735Sk7lN" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.min.js" integrity="sha384-+sLIOodYLS7CIrQpBjl+C7nPvqq+FbNUBDunl/OZv93DB7Ln/533i8e/mZXLi/P+" crossorigin="anonymous"></script>
     <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="app/js/main-logic.js"></script>
     <script>
-      let title = '', copy = '';
-      function certificateDetailIn(){
-        // Alerting previous
-        Swal.fire({
-          title: 'Are you sure?',
-          text: "You have to start this step all over again!",
-          icon: 'warning',
-          showCancelButton: true,
-          confirmButtonColor: '#3085d6',
-          cancelButtonColor: '#d33',
-          confirmButtonText: 'Yes, proceed to return!'
-        }).then((result) => {
-          if (result.isConfirmed) {
-            // Removing Cloned Fields
-            for(let i = 1; i <= copy; i++){
-              $('#certificatee-field-'+i).remove()
-            }
+      document.querySelector('.custom-file-input').addEventListener('change',function(e){
+        var fileName = document.getElementById("file-upload").files[0].name;
+        var nextSibling = e.target.nextElementSibling
+        nextSibling.innerText = fileName
+      })
+      $("#file-upload").change(function() {
+          var fd = new FormData();
+          var files = $('#file-upload')[0].files[0];
+          fd.append('file', files);
 
-            // Clearing Sample Field
-            $('#certificatee-0').val("")
-
-            // Hiding Form
-            $('#certificateeDetail').addClass('d-none')
-            $('#certificate-recipient-step').removeClass('bg-primary text-white')
-            $('#certificate-recipient-step').addClass('bg-light border text-muted')
-            
-            // Showing Form
-            $('#certificateDetailForm').removeClass('d-none')
-            $('#certificate-detail-step').removeClass('bg-light border text-muted')
-            $('#certificate-detail-step').addClass('bg-primary text-white')
-          }
-        })
-      }
-
-      function certificateDetailOut(){
-        // Hiding Form
-        $('#certificateDetailForm').addClass('d-none')
-        $('#certificate-detail-step').removeClass('bg-primary text-white')
-        $('#certificate-detail-step').addClass('bg-light border text-muted')
-        
-        // Showing Form
-        $('#certificateeDetail').removeClass('d-none')        
-        $('#certificate-recipient-step').removeClass('bg-light border text-muted')
-        $('#certificate-recipient-step').addClass('bg-primary text-white')
-      }
-
-      function certificateDetailSubmit(){
-        // Getting Form Value
-        title = $('#certificateTitle').val()
-        copy = $('#numberCopy').val()
-
-        // Form validation
-        if(title != '' && copy != ''){
-          // Error effect cleaning
-          $('#error-title').addClass("d-none")
-          $('#error-copy').addClass("d-none")
-          $('#certificateTitle').removeClass("border border-danger")
-          $('#numberCopy').removeClass("border border-danger")
-
-          // Form Transition
-          certificateDetailOut()
-          
-          // Cloning Fields
-          $('#certificatee-label-0').text("Name 1")
-          let i
-          var cloned = $("#certificatee-field-0")
-          for (i = 0; i < copy-1; i++) {
-            // Cloning Parent
-            cloned.clone().removeAttr('id', 'certificatee-field-0').attr('id', 'certificatee-field-'+(i+1)).insertAfter($("#certificatee-field-"+i));
-  
-            // Altering Label id, text, and for attribute
-            $('#certificatee-field-'+(i+1)).children().first().removeAttr('id', 'certificatee-label-0').attr('id', 'certificatee-label-'+(i+1))
-            $('#certificatee-label-'+(i+1)).removeAttr('for', 'certificatee-0').attr('for', 'certificatee-'+(i+1))
-            $('#certificatee-label-'+(i+1)).text("Name "+(i+2))
-  
-            // Altering field id
-            $('#certificatee-field-'+(i+1)).children().last().removeAttr('id', 'certificatee-0').attr('id', 'certificatee-'+(i+1))
-          }
-  
-          // Debugging
-          console.log(title, copy);
-          $('#certificateTitleDebug').text(title)
-          $('#numberCopyDebug').text(copy)
-        } else {
-          // Field highlighting for form validation
-          if(title == ''){
-            $('#error-title').removeClass("d-none")
-            $('#certificateTitle').addClass("border border-danger")
-          }
-          if(copy == ''){
-            $('#error-copy').removeClass("d-none")
-            $('#numberCopy').addClass("border border-danger")
-          }
-          Swal.fire({
-            icon: 'error',
-            title: 'Oops...',
-            text: "Make sure you've filled all the fields!"
-          })
-        }
-
-      }
+          $.ajax({
+              url: 'upload.php',
+              type: 'post',
+              data: fd,
+              contentType: false,
+              processData: false,
+              success: function(response){
+                  if(response != 0){
+                    Swal.fire(
+                      'Uploaded!',
+                      'Your file has been uploaded.',
+                      'success'
+                    )
+                    $('#img-preview').removeClass("d-none").attr('src', response)
+                  }
+                  else{
+                    Swal.fire(
+                      'Upload Failed!',
+                      'Your file upload has been failed.',
+                      'warning'
+                    )
+                  }
+              },
+          });
+      });
     </script>
   </body>
 </html>

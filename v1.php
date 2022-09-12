@@ -39,12 +39,12 @@
                 }else{
 
                   //designed certificate picture
-                  $image = "certificate-templates/sample.png";
+                  $image = "app/certificate-templates/sample.png";
 
                   $createimage = imagecreatefrompng($image);
 
                   //this is going to be created once the generate button is clicked
-                  $output = "outputs/$name"."_generated (".date("Ymdhis").").png";
+                  $output = "app/outputs/$name"."_generated (".date("Ymdhis").").png";
 
                   //then we make use of the imagecolorallocate inbuilt php function which i used to set color to the text we are displaying on the image in RGB format
                   $text_color = imagecolorallocate($createimage, 246, 43, 65);
@@ -83,7 +83,7 @@
                   $certificate_text = $name;
 
                   //font directory for name
-                  $drFont = dirname(__FILE__)."/fonts/Montserrat-Bold.otf";
+                  $drFont = dirname(__FILE__)."/app/fonts/Montserrat-Bold.otf";
 
                   //function to display name on certificate picture
                   $text1 = imagettftext($createimage, 28, $rotation, $origin_x, $origin_y, $text_color, $drFont, $certificate_text);
